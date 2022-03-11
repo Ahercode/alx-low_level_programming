@@ -24,7 +24,6 @@ int main(void)
 
 		if (k < j)
 		{
-			
 			putchar(k + '0');
 			putchar(j + '0');
 
@@ -39,6 +38,5 @@ int main(void)
 		i++;
 	}
 	putchar('\n');
-
 	return (0);
 }
