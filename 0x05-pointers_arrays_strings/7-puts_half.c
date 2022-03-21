@@ -1,29 +1,24 @@
 #include "main.h"
-#include "stdio.h"
 
 /**
- * print_array - print reverse characters.
- * @a: Array
- * @n: Number of array
- * Return: Always 0.
+ * puts_half - half of a string.
+ * @str: string to be printed.
  */
-void print_array(int *a, int n)
+void puts_half(char *str)
 {
-	int i;
+	int i = 0, len = 0, j;
 
-	if (n > 0)
-	{
-		for (i = 0 ; n > i; i++)
-		{
-			if (i != n - 1)
-			{
-				printf("%d, ", a[i]);
-			}
-			else
-			{
-			       printf("%d", a[i]);
-			}
-		}
-	}
-	printf("\n");
+	while (str[i++])
+		len++;
+
+	if ((len % 2) == 0)
+		j = len / 2;
+
+	else
+		j = (len + 1) / 2;
+
+	for (i = j; i < len; i++)
+		_putchar(str[i]);
+
+	_putchar('\n');
 }
