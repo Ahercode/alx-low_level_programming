@@ -1,37 +1,39 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 
-#define MIN_CHAR 8
-#define MAX_CHAR 1023
-#define BUF_SIZE 1024
-#define PRIME_MOD 937
+/**
+ * main - print password.
+ *
+ * Return: 0.
+ */
 
-int main (int argc, char **argv)
+int main(void)
 {
-    int N;
-    char password [BUF_SIZE];
+	int ascii = 2772, i = 0, j, random;
+	char password[100];
+	time_t t;
 
-    while (1) {
-        // get N
-        while (1) {
-            printf ("Enter number of digits: ");
-            scanf ("%d", &N);
-            if (!N) exit (EXIT_SUCCESS);
-            if (N >= MIN_CHAR && N <= MAX_CHAR)
-                break;
-            printf ("Password should be between %d - %d characters\n", MIN_CHAR, MAX_CHAR); 
-        }
-    
-        time_t now = time (NULL);
+	srand((int) time(&t));
+	while (ascii > 126)
+	{
+		random = rand() % 126;
+		password[i] = random;
+		ascii -= random;
+		i++;
+	}
+	if (ascii > 0)
+		password[i] = ascii;
+	else
+	{
+		i--;
+	}
+	
 
-        srand ((unsigned int) (now % PRIME_MOD));
-
-        for (int i = 0; i < N; i++) 
-            password [i] = 33 + rand () % 94;
-    
-        password [N] = '\0';
-
-        printf ("password = %s\n", password);
-    }
+	for (j = 0; j <= i; j++)
+	{
+		printf("%c", password[j]);
+	}
+	return (0);
 }
