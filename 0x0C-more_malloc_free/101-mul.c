@@ -1,99 +1,166 @@
-#include <stdlib.h>
-#include <stdio.h>
 #include "main.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include <unistd.h>
 
 /**
- * is_digit - checks if a string contains a non-digit char
- * @s: string to be evaluated
+ * _putchar - writes the character c to stdout
+ * @c: The character to print
  *
- * Return: 0 if a non-digit is found, 1 otherwise
+ * Return: On success 1.
+ * On error, -1 is returned, and errno is set appropriately.
  */
-int is_digit(char *s)
+int _putchar(char c)
 {
-	int i = 0;
+	return (write(1, &c, 1));
+}
 
-	while (s[i])
+/**
+ * create_array - create an array of size size, initialized with a char c
+ * @size: size of the array
+ * @c: character array is initialized with
+ *
+ * Return: a pointer to the array, or NULL is failure
+ */
+char *create_array(unsigned int size, char c)
+{
+	char *array = NULL;
+	unsigned int i;
+	char *array_cpy;
+
+	if (size == 0)
+		return (NULL);
+
+	array = malloc(sizeof(char) * size);
+	if (array == NULL)
+		return (NULL);
+	array_cpy = array;
+
+	for (i = 0; i < size; i++)
 	{
-		if (s[i] < '0' || s[i] > '9')
-			return (0);
-		i++;
+		*array_cpy = c;
+		array_cpy++;
 	}
-	return (1);
+
+	return (array);
 }
 
 /**
- * _strlen - returns the length of a string
- * @s: string to evaluate
+ * mult - multiplies two number strings
+ * @prd: where the product is stored
+ * @tmp: used for calculating product
+ * @len1: length of first factor
+ * @len2: length of second factor
+ * @av: command line input
  *
- * Return: the length of the string
+ * Return: pointer to character array containing product
  */
-int _strlen(char *s)
+char *mult(char *prd, char *tmp, int len1, int len2, char **av)
 {
-	int i = 0;
+	int i, j, k, l = 0;
+	int digit, d1, d2, carry = 0;
 
-	while (s[i] != '\0')
+	for (i = len1 - 1; i >= 0; i--)
 	{
-		i++;
-	}
-	return (i);
-}
-
-/**
- * errors - handles errors for main
- */
-void errors(void)
-{
-	printf("Error\n");
-	exit(98);
-}
-
-/**
- * main - multiplies two positive numbers
- * @argc: number of arguments
- * @argv: array of arguments
- *
- * Return: always 0 (Success)
- */
-int main(int argc, char *argv[])
-{
-	char *s1, *s2;
-	int len1, len2, len, i, carry, digit1, digit2, *result, a = 0;
-
-	s1 = argv[1], s2 = argv[2];
-	if (argc != 3 || !is_digit(s1) || !is_digit(s2))
-		errors();
-	len1 = _strlen(s1);
-	len2 = _strlen(s2);
-	len = len1 + len2 + 1;
-	result = malloc(sizeof(int) * len);
-	if (!result)
-		return (1);
-	for (i = 0; i <= len1 + len2; i++)
-		result[i] = 0;
-	for (len1 = len1 - 1; len1 >= 0; len1--)
-	{
-		digit1 = s1[len1] - '0';
-		carry = 0;
-		for (len2 = _strlen(s2) - 1; len2 >= 0; len2--)
+		k = len1 + len2 - 1;
+		for (j = len2 - 1; j >= -1; j--)
 		{
-			digit2 = s2[len2] - '0';
-			carry += result[len1 + len2 + 1] + (digit1 * digit2);
-			result[len1 + len2 + 1] = carry % 10;
-			carry /= 10;
+			d1 = av[1][i] - '0';
+			d2 = av[2][j] - '0';
+			if (j >= 0)
+				digit = d1 * d2 + carry;
+			else
+				digit = carry;
+			if (digit > 9)
+			{
+				carry = digit / 10;
+				digit = digit % 10;
+			}
+			else
+				carry = 0;
+			tmp[k] = digit + '0';
+			k--;
 		}
-		if (carry > 0)
-			result[len1 + len2 + 1] += carry;
+		for (j = len2 + len1 - 1; j >= 0; j--)
+		{
+			digit = tmp[j] - '0' + prd[j - l] - '0' + carry;
+			if (digit > 9)
+			{
+				carry = digit / 10;
+				digit = digit % 10;
+			}
+			else
+				carry = 0;
+			prd[j - l] = digit + '0';
+		}
+		l++;
 	}
-	for (i = 0; i < len - 1; i++)
+
+	return (prd);
+}
+
+/**
+ * print_prod - prints the product of multiplying
+ * @prod: array where product is stored
+ * @len1: length of first factor
+ * @len2: length of second factor
+ */
+void print_prod(char *prod, int len1, int len2)
+{
+	int i;
+
+	for (i = 0; prod[i] == '0'; i++)
+		;
+	for (; i < len1 + len2; i++)
 	{
-		if (result[i])
-			a = 1;
-		if (a)
-			_putchar(result[i] + '0');
+		_putchar(prod[i]);
 	}
-	if (!a)
-		_putchar('0');
 	_putchar('\n');
-	free(result);
+}
+
+/**
+ * main - multiplies two number strings from input
+ * @ac: number of elements in av
+ * @av: inputs from command line, numbs to be multiplied
+ *
+ * Return: 0 (Always Success)
+ */
+int main(int ac, char **av)
+{
+	int len1, len2;
+	char *temp = NULL; char *prod = NULL;
+
+	if (ac != 3)
+	{
+		_putchar('E'); _putchar('r'); _putchar('r'); _putchar('o');
+		_putchar('r'); _putchar('\n'); exit(98);
+	}
+	for (len1 = 0; av[1][len1] != '\0'; len1++)
+		if (av[1][len1] < '0' || av[1][len1] > '9')
+		{
+			_putchar('E'); _putchar('r'); _putchar('r');
+			_putchar('o'); _putchar('r'); _putchar('\n'); exit(98);
+		}
+	for (len2 = 0; av[2][len2] != '\0'; len2++)
+		if (av[2][len2] < '0' || av[2][len2] > '9')
+		{
+			_putchar('E'); _putchar('r'); _putchar('r');
+			_putchar('o'); _putchar('r'); _putchar('\n'); exit(98);
+		}
+	temp = create_array(len1 + len2 + 1, '0');
+	if (temp == NULL)
+		exit(98);
+	prod = create_array(len1 + len2 + 1, '0');
+	if (prod == NULL)
+		exit(98);
+
+	prod = mult(prod, temp, len1, len2, av);
+
+	print_prod(prod, len1, len2);
+	free(prod);
+	free(temp);
+
 	return (0);
 }
